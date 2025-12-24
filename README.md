@@ -22,3 +22,20 @@ USAGE:
 	task list todo
 	task list mark
 
+
+FEATURES:
+	@ adding
+		-- unique key generation
+		-- keys in order, 1-indexed
+		-- numbers reorder when a value earlier
+		than the last is completed
+        -- structure is a linked list
+
+	@ updating
+
+	@ deleting
+        -- correct indexes after list mutation
+
+	@ marking
+
+	@ listing
