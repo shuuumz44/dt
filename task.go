@@ -4,16 +4,31 @@ import (
 	"os"
 	"fmt"
 	"time"
+	"strconv"
 	// "encoding/json"
 )
 
 type task struct {
-	id int
 	desc string
 	status int 
 	created time.Time
 	updated time.Time
 	next *task
+}
+
+func scroll(p *task, amnt int) {
+	// scrolls t pointer to specified value. (args[2] or end)
+	if amnt==0 {
+		// treat '0' as scroll to end
+		for p.next != nil {
+			p = p.next
+		}
+	} else {
+		// scroll amnt times
+		for amnt > 0 {
+			p = p.next
+		}
+	}
 }
 
 func main() {
@@ -27,16 +42,12 @@ func main() {
 	var head task
 	t := &head
 	
-	key := 1
 	switch args[1] {
 		case "add":
 			fmt.Println("added", args[2])
 			
-			for t.next != nil {
-				t = t.next
-			}
+			scroll(t, 0)
 			next := task {
-				id: key,
 				desc: args[2],
 				status: 0,
 				created: time.Now(),
@@ -44,16 +55,22 @@ func main() {
 				next: nil,
 			}
 			t.next = &next
-			key++
 			
 		case "update":
-			//
+			id, _ := strconv.Atoi(args[2])
+			scroll(t, id)
+			t.updated = time.Now()
+
 		case "delete":
-			//
+			id, _ := strconv.Atoi(args[2])
+			scroll(t, id)
+			// remove pointer
+
 		case "mark":
-			//
-		case "done":
-			//
+			id, _ := strconv.Atoi(args[2])
+			scroll(t, id)
+			// mark status
+
 		case "list":
 			p := &head;
 			for p != nil {
