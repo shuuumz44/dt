@@ -13,16 +13,15 @@ Exactly what it sounds like.
 	task delete 14
 
 	-- mark in progress / complete
-	task mark 14
-	task done 14
+	task mark 0 14
 	
 	-- list all tasks
 	task list
 
 	-- list by status
-	task list done
 	task list todo
-	task list mark
+	task list doing
+	task list done
 
 *remember: CLI arguments are 0 indexed.
 
@@ -41,5 +40,13 @@ Exactly what it sounds like.
         -- correct indexes after list mutation
 
 	@ marking
+        -- status listed as an integer:
+            0 -> todo
+            1 -> doing
+            2 -> done
 
 	@ listing
+
+to do:
+    - abstract away argument length checking
+    - actually add JSON I/O & parsing

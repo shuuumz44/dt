@@ -34,15 +34,16 @@ func scroll(p *task, amnt int) {
 func main() {
 	var args []string = os.Args
 	amnt := len(args)
-	if amnt != 3 {
-		fmt.Println("invalid number of arguments")
-		return
-	}
 	
 	var head task
 	t := &head
 	
 	switch args[1] {
+		if amnt != 3 {
+			fmt.Println("invalid number of arguments")
+			return
+		}
+
 		case "add":
 			fmt.Println("added", args[2])
 			
@@ -57,26 +58,63 @@ func main() {
 			t.next = &next
 			
 		case "update":
-			id, _ := strconv.Atoi(args[2])
+			if amnt != 4 {
+				fmt.Println("invalid number of arguments")
+				return
+			}
+
+			id, err := strconv.Atoi(args[2])
+			if (err != nil) {
+				fmt.Println("string convert error:", err)
+				return
+			}
 			scroll(t, id)
-			t.updated = time.Now()
+			t.updated = time.Now()	// update time
 
 		case "delete":
-			id, _ := strconv.Atoi(args[2])
-			scroll(t, id)
-			// remove pointer
+			if amnt != 3 {
+				fmt.Println("invalid number of arguments")
+				return
+			}
+
+			id, err := strconv.Atoi(args[2])
+			if (err != nil) {
+				fmt.Println("string convert error:", err)
+				return
+			}
+			scroll(t, id-1)
+			t.next = t.next.next	// remove pointer
 
 		case "mark":
-			id, _ := strconv.Atoi(args[2])
+			if amnt != 4 {
+				fmt.Println("invalid number of arguments")
+				return
+			}
+
+			id, err := strconv.Atoi(args[2])
+			if (err != nil) {
+				fmt.Println("string convert error:", err)
+				return
+			}
+
 			scroll(t, id)
 			// mark status
 
 		case "list":
+			if amnt != 2 {
+				fmt.Println("invalid number of arguments")
+				return
+			}
+
 			p := &head;
 			for p != nil {
 				// print properties
-				p = p.next;
+				p = p.next
 			}
+
+		default:
+			// print help
+			fmt.Println("help message")
 	}
 }
 
