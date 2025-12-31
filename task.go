@@ -16,8 +16,17 @@ type task struct {
 	next *task
 }
 
+func check(needed int, amnt int) bool {
+	if (needed==amnt) {
+		return true
+	}
+
+	fmt.Println("invalid number of arguments")
+	return false
+}
+
 func scroll(p *task, amnt int) {
-	// scrolls t pointer to specified value. (args[2] or end)
+	// scrolls pointer p to specified value. (args[2] or end)
 	if amnt==0 {
 		// treat '0' as scroll to end
 		for p.next != nil {
@@ -34,19 +43,21 @@ func scroll(p *task, amnt int) {
 func main() {
 	var args []string = os.Args
 	amnt := len(args)
+	if (amnt <= 1) {
+		// print help
+		return
+	}
 	
 	var head task
 	t := &head
 	
 	switch args[1] {
-		if amnt != 3 {
-			fmt.Println("invalid number of arguments")
-			return
-		}
-
 		case "add":
-			fmt.Println("added", args[2])
-			
+			rc := check(amnt, 3)
+			if (rc == false) {
+				return
+			}
+
 			scroll(t, 0)
 			next := task {
 				desc: args[2],
@@ -56,10 +67,12 @@ func main() {
 				next: nil,
 			}
 			t.next = &next
+
+			fmt.Println("added", args[2])
 			
 		case "update":
-			if amnt != 4 {
-				fmt.Println("invalid number of arguments")
+			rc := check(amnt, 4)
+			if (rc == false) {
 				return
 			}
 
@@ -72,11 +85,10 @@ func main() {
 			t.updated = time.Now()	// update time
 
 		case "delete":
-			if amnt != 3 {
-				fmt.Println("invalid number of arguments")
+			rc := check(amnt, 3)
+			if (rc == false) {
 				return
 			}
-
 			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
 				fmt.Println("string convert error:", err)
@@ -86,8 +98,8 @@ func main() {
 			t.next = t.next.next	// remove pointer
 
 		case "mark":
-			if amnt != 4 {
-				fmt.Println("invalid number of arguments")
+			rc := check(amnt, 4)
+			if (rc == false) {
 				return
 			}
 
@@ -101,8 +113,8 @@ func main() {
 			// mark status
 
 		case "list":
-			if amnt != 2 {
-				fmt.Println("invalid number of arguments")
+			rc := check(amnt, 2)
+			if (rc == false) {
 				return
 			}
 

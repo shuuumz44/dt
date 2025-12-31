@@ -2,7 +2,7 @@
 
 Exactly what it sounds like.
 
-**USAGE:**
+# USAGE:
 	-- add task
 	task add "go on a walk"
 	
@@ -12,7 +12,7 @@ Exactly what it sounds like.
     -- delete task
 	task delete 14
 
-	-- mark in progress / complete
+	-- mark to do / in progress / complete
 	task mark 0 14
 	
 	-- list all tasks
@@ -25,8 +25,8 @@ Exactly what it sounds like.
 
 *remember: CLI arguments are 0 indexed.
 
-**FEATURES:**
-	@ adding
+# FEATURES:
+	@ adding 
 		-- unique key generation
 		-- keys in order, 1-indexed
 		-- numbers reorder when a value earlier
@@ -48,5 +48,5 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - abstract away argument length checking
     - actually add JSON I/O & parsing
+    - expand add/delete to accept infinitely many arguments
