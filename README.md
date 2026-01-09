@@ -28,15 +28,13 @@ Exactly what it sounds like.
 		-- unique key generation
 		-- keys in order, 1-indexed
 		-- numbers reorder when a value earlier
-		than the last is completed
-        -- structure is a linked list
-        (you want all ids to self correct in a linked list. don't overcomplicate the obvious way to do this.)
+		than the last is completed (structure is a linked list)
 
 	@ updating
         -- changes the name of the specified task. If no replacement name is specified, update the task's time.
 
 	@ deleting
-        -- correct indexes after list mutation
+        (correct indexes after list mutation)
 
 	@ marking
         -- status listed as an integer:
@@ -47,7 +45,8 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - actually add JSON & parsing
+    - ameliorate JSON parsing
+    - fix scroll() segfault
     - expand add/delete to accept infinitely many arguments
 
 # NOTES:

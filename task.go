@@ -50,7 +50,7 @@ func main() {
 	}
 	
 	// decode 
-	var head *task
+	var head task
 	f, err := os.Open("tasks.JSON")
 	if err == nil {
 		dec := json.NewDecoder(f)
@@ -66,15 +66,14 @@ func main() {
 		}
 
 	}
-	t := head
+	t := &head
 	
 	switch args[1] {
 		case "add":
-			if rc := check(amnt, 3); rc == false {
+			if check(amnt, 3) == false {
 				return
 			}
 
-			scroll(t, 0)
 			next := task {
 				Desc: args[2],
 				Status: 0,
@@ -87,7 +86,7 @@ func main() {
 			fmt.Println("added", args[2])
 			
 		case "update":
-			if rc := check(amnt, 4); rc == false {
+			if check(amnt, 4) == false {
 				return
 			}
 
@@ -100,7 +99,7 @@ func main() {
 			t.Updated = time.Now()	// update time
 
 		case "delete":
-			if rc := check(amnt, 3); rc == false {
+			if check(amnt, 3) == false {
 				return
 			}
 
@@ -113,7 +112,7 @@ func main() {
 			t.Next = t.Next.Next	// remove pointer
 
 		case "mark":
-			if rc := check(amnt, 4); rc == false {
+			if check(amnt, 4) == false {
 				return
 			}
 
@@ -127,11 +126,11 @@ func main() {
 			// mark status
 
 		case "list":
-			if rc := check(amnt, 2); rc == false {
+			if check(amnt, 2) == false {
 				return
 			}
 
-			p := head;
+			p := &head;
 			for p != nil {
 				// print properties
 				p = p.Next
@@ -142,7 +141,16 @@ func main() {
 			fmt.Println("help message")
 			return
 
-		// marshal / encode file into JSON
+		// encode file back into JSON
+		out, err := os.Create("tasks.JSON")
+		if err != nil {
+			fmt.Println("file could not be written to.") 
+		}
+
+		enc := json.NewEncoder(out)
+		if err := enc.Encode(t); err != nil {
+			fmt.Println("writing error")
+		}
 	}
 }
 
