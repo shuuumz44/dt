@@ -23,8 +23,6 @@ Exactly what it sounds like.
 	task list doing
 	task list done
 
-*remember: CLI arguments are 0 indexed.
-
 # FEATURES:
 	@ adding 
 		-- unique key generation
@@ -35,6 +33,7 @@ Exactly what it sounds like.
         (you want all ids to self correct in a linked list. don't overcomplicate the obvious way to do this.)
 
 	@ updating
+        -- changes the name of the specified task. If no replacement name is specified, update the task's time.
 
 	@ deleting
         -- correct indexes after list mutation
@@ -48,5 +47,8 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - actually add JSON I/O & parsing
+    - actually add JSON & parsing
     - expand add/delete to accept infinitely many arguments
+
+# NOTES:
+    - Marshal/Unmarshal are meant for bytes/strings/chunks of data. Use encoder and decoder objects.
