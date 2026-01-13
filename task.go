@@ -74,17 +74,18 @@ func main() {
 				return
 			}
 
-			next := task {
+			next := &task {
 				Desc: args[2],
 				Status: 0,
 				Created: time.Now(),
 				Updated: time.Now(),
 				Next: nil,
 			}
-			t.Next = &next
+			t.Next = next
 
 			fmt.Println("added", args[2])
 			
+
 		case "update":
 			if check(amnt, 4) == false {
 				return
@@ -98,6 +99,7 @@ func main() {
 			scroll(t, id)
 			t.Updated = time.Now()	// update time
 
+
 		case "delete":
 			if check(amnt, 3) == false {
 				return
@@ -110,6 +112,7 @@ func main() {
 			}
 			scroll(t, id-1)
 			t.Next = t.Next.Next	// remove pointer
+
 
 		case "mark":
 			if check(amnt, 4) == false {
@@ -125,6 +128,7 @@ func main() {
 			scroll(t, id)
 			// mark status
 
+
 		case "list":
 			if check(amnt, 2) == false {
 				return
@@ -136,20 +140,24 @@ func main() {
 				p = p.Next
 			}
 
+
 		default:
 			// print help
 			fmt.Println("help message")
 			return
 
 		// encode file back into JSON
-		out, err := os.Create("tasks.JSON")
+		// out, err := os.Create("tasks.JSON")
 		if err != nil {
 			fmt.Println("file could not be written to.") 
 		}
 
-		enc := json.NewEncoder(out)
-		if err := enc.Encode(t); err != nil {
-			fmt.Println("writing error")
+		enc := json.NewEncoder(os.Stdout)
+		for t != nil {
+			if err := enc.Encode(t); err != nil {
+				fmt.Println("writing error")
+			}
+			t = t.Next
 		}
 	}
 }

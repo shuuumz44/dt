@@ -45,9 +45,9 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
+    - properly set up linked list/manage pointers
     - ameliorate JSON parsing
     - fix scroll() segfault
     - expand add/delete to accept infinitely many arguments
 
 # NOTES:
-    - Marshal/Unmarshal are meant for bytes/strings/chunks of data. Use encoder and decoder objects.
