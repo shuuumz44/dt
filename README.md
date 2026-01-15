@@ -45,9 +45,10 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - properly set up linked list/manage pointers
     - ameliorate JSON parsing
+    - properly set up linked list/manage pointers
     - fix scroll() segfault
     - expand add/delete to accept infinitely many arguments
 
 # NOTES:
+    - Marshal functions for buffers. NewEncoder functions take care of buffers for you.
