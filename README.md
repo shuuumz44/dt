@@ -45,10 +45,16 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - ameliorate JSON parsing
+    - use JSON parsing from concept
     - properly set up linked list/manage pointers
     - fix scroll() segfault
     - expand add/delete to accept infinitely many arguments
+    - make parser retain the file's indentation
 
 # NOTES:
-    - Marshal functions for buffers. NewEncoder functions take care of buffers for you.
+    - Marshal functions are for buffers. NewEncoder functions do not. If you want to read JSON,
+    manipulate it, and send it back, you need to use marshal.
+    - JSON may or may not be understood in practice to end in a newline. Additionally, parsing JSON
+    destroys the file's indentation. This is barely a warning however because 99% of the
+    time JSON files are meant to be generated, not typed by hand. Also JSON is explicitly understood
+    to be a stream of bytes, and all files end in EOF, and...anyway.
