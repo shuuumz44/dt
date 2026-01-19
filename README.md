@@ -45,16 +45,17 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - use JSON parsing from concept
-    - properly set up linked list/manage pointers
-    - fix scroll() segfault
+    - rewrite data structure from a linked list to an array
     - expand add/delete to accept infinitely many arguments
     - make parser retain the file's indentation
+    - add array length checking if JSON array length exceeds array capacity
 
 # NOTES:
     - Marshal functions are for buffers. NewEncoder functions do not. If you want to read JSON,
     manipulate it, and send it back, you need to use marshal.
-    - JSON may or may not be understood in practice to end in a newline. Additionally, parsing JSON
-    destroys the file's indentation. This is barely a warning however because 99% of the
-    time JSON files are meant to be generated, not typed by hand. Also JSON is explicitly understood
-    to be a stream of bytes, and all files end in EOF, and...anyway.
+    - Any time you process a buffer, you need to know the amount of bytes actually read into it. This means 
+    that every time you use that buffer for something after you pass data into it, you need to specify
+    the range of characters in the buffer that actually contain the data that you care about, by using a 
+    slice operator. Typical usage looks like passing in "buffer[:amntBytes]"
+    - JSON files might have to end in a newline, but I'm unsure. Additionally parsing JSON ruins
+    its indentation (but there's functions to fix that)

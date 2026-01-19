@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"fmt"
 	"os"
 	"strconv"
@@ -51,20 +50,21 @@ func main() {
 	
 	// decode 
 	var head task
+	var bytes_read int
+	buffer := make([]byte, 1024)
+
 	f, err := os.Open("tasks.JSON")
 	if err == nil {
-		dec := json.NewDecoder(f)
-		for {
-			if err := dec.Decode(head); err == io.EOF {
-				break
-			} else if err != nil {
-				fmt.Println("decode error")
-				return
-			}
-			// check JSON for now
-			fmt.Println(head)
+		bytes_read, err = f.Read(buffer)
+		if err != nil {
+			fmt.Println("read error: ", err)
+			return
 		}
-
+		err = json.Unmarshal(buffer[:bytes_read], &head)
+		if err != nil {
+			fmt.Println("unmarshal error: ", err)
+			return
+		}
 	}
 	t := &head
 	
@@ -93,7 +93,7 @@ func main() {
 
 			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
-				fmt.Println("string convert error:", err)
+				fmt.Println("string convert error: ", err)
 				return
 			}
 			scroll(t, id)
@@ -107,7 +107,7 @@ func main() {
 
 			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
-				fmt.Println("string convert error:", err)
+				fmt.Println("string convert error: ", err)
 				return
 			}
 			scroll(t, id-1)
@@ -121,7 +121,7 @@ func main() {
 
 			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
-				fmt.Println("string convert error:", err)
+				fmt.Println("string convert error: ", err)
 				return
 			}
 
@@ -146,18 +146,22 @@ func main() {
 			fmt.Println("help message")
 			return
 
-		// encode file back into JSON
-		// out, err := os.Create("tasks.JSON")
-		if err != nil {
-			fmt.Println("file could not be written to.") 
+		// encode 
+		out, oErr := os.Create("tasks.JSON")
+		if oErr != nil {
+			fmt.Println("create error: ", oErr)
+			return
 		}
 
-		enc := json.NewEncoder(os.Stdout)
 		for t != nil {
-			if err := enc.Encode(t); err != nil {
-				fmt.Println("writing error")
-			}
+			// somehow write each separate struct in the linked list to the same file
 			t = t.Next
+		}
+
+		_, err = out.Write(buf)
+		if err != nil {
+			fmt.Println("write error: ", err)
+			return
 		}
 	}
 }
