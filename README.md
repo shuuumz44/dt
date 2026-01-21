@@ -27,8 +27,6 @@ Exactly what it sounds like.
 	@ adding 
 		-- unique key generation
 		-- keys in order, 1-indexed
-		-- numbers reorder when a value earlier
-		than the last is completed (structure is a linked list)
 
 	@ updating
         -- changes the name of the specified task. If no replacement name is specified, update the task's time.
@@ -45,10 +43,12 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - rewrite data structure from a linked list to an array
+    - create help message
     - expand add/delete to accept infinitely many arguments
     - make parser retain the file's indentation
+    - handle errors more gracefully. Abstract a function, make error codes
     - add array length checking if JSON array length exceeds array capacity
+    - add ability to set index for list (initial is 0-indexed, but can set it to 1)
 
 # NOTES:
     - Marshal functions are for buffers. NewEncoder functions do not. If you want to read JSON,
