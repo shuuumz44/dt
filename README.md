@@ -1,4 +1,4 @@
-*Go CLI Task Manager*
+*dt: Task Manager*
 
 Exactly what it sounds like.
 
@@ -13,7 +13,7 @@ Exactly what it sounds like.
 	task delete 14
 
 	-- mark to do / in progress / complete
-	task mark 0 14
+	task mark 14 0
 	
 	-- list all tasks
 	task list
@@ -43,10 +43,14 @@ Exactly what it sounds like.
 	@ listing
 
 to do:
-    - create help message
+    - add delete function
     - expand add/delete to accept infinitely many arguments
-    - make parser retain the file's indentation
+    - add function to convert multiple arguments at once
+    - format time and status
+    - make parser indent JSON
+    - consider listing tasks using a slice instead of a loop
     - handle errors more gracefully. Abstract a function, make error codes
+    - add feature to list/mark tasks by index or description
     - add array length checking if JSON array length exceeds array capacity
     - add ability to set index for list (initial is 0-indexed, but can set it to 1)
 

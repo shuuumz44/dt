@@ -24,21 +24,48 @@ func check(needed int, amnt int) bool {
 	return false
 }
 
+func listTask(t *task) {
+	fmt.Println(t.Desc)
+	fmt.Println("status:		", t.Status)
+	fmt.Println("began:		", t.Created)
+	fmt.Println("last updated:	", t.Updated)
+	fmt.Println()
+}
+
 func main() {
 	// macros
 	ARR_MAX := 1000
+	help := `
+	dt: task manager CLI
+	usage: 
+		dt [add] [update] [delete] [mark] [list]
+	examples:
+		add a new task called "get milk":
+		dt add	"get milk"
+
+		update the status of task "exercise":
+		dt update exercise
+
+		mark task "meditate" as in progress:
+		dt mark meditate 1
+
+		list all existing tasks:
+		dt list [todo | doing | done]
+		*add 1 of the arguments in brackets to filter the list by status.
+
+	`
 
 	var args []string = os.Args
 	amnt := len(args)
 	if (amnt < 2) {
-		// print help
+		fmt.Println(help)
 		return
 	}
 	
 	// decode 
 	arr := make([]task, 0, ARR_MAX)
 	buffer := make([]byte, 1024)
-	// numTasks := 0
+	numTasks := 0
 
 	f, err := os.Open("tasks.JSON")
 	if err == nil {
@@ -58,7 +85,7 @@ func main() {
 			fmt.Println("unmarshal error: ", err)
 			return
 		}
-		// numTasks = len(arr)
+		numTasks = len(arr)
 	}
 	
 	switch args[1] {
@@ -84,12 +111,15 @@ func main() {
 				return
 			}
 
-			_, err := strconv.Atoi(args[2])
+			name := args[3]
+			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
 				fmt.Println("string convert error: ", err)
 				return
 			}
-			// arr[id].Updated = time.Now()	// update time
+
+			arr[id].Desc = name;
+			arr[id].Updated = time.Now()
 
 
 		case "delete":
@@ -97,26 +127,28 @@ func main() {
 				return
 			}
 
-			_, err := strconv.Atoi(args[2])
+			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
 				fmt.Println("string convert error: ", err)
 				return
 			}
-			// this one will take a bit more effort
+
+			next := id+1
+			arr = append(arr[:id], arr[next:numTasks]...)
 
 		case "mark":
 			if check(amnt, 4) == false {
 				return
 			}
 
-			_, err := strconv.Atoi(args[2])
+			newStatus, err := strconv.Atoi(args[3])
+			id, err := strconv.Atoi(args[2])
 			if (err != nil) {
 				fmt.Println("string convert error: ", err)
 				return
 			}
 
-			// mark status
-			// arr[i].Status = args[3]
+			arr[id].Status = newStatus
 
 
 		case "list":
@@ -124,16 +156,16 @@ func main() {
 				return
 			}
 
-			// i believe you can use a slice for this.
-			// for arr[:len] {print data}
+			for i:=0; i < numTasks; i++ {
+				listTask(&arr[i])
+			}
 
 		default:
 			// print help
-			fmt.Println("help message")
+			fmt.Println(help)
 			return
 	}
 
-	fmt.Println("first task: ", arr[0].Desc)
 
 	// encode 
 	out, err := os.Create("tasks.JSON")
