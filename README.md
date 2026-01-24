@@ -19,40 +19,33 @@ Exactly what it sounds like.
 	task list
 
 	-- list by status
-	task list todo
-	task list doing
-	task list done
+	task list 0
+	task list 1
+	task list 2
 
 # FEATURES:
-	@ adding 
-		-- unique key generation
-		-- keys in order, 1-indexed
+	@ adding (add task)
 
 	@ updating
-        -- changes the name of the specified task. If no replacement name is specified, update the task's time.
+        -- change the name of the specified task. 
 
-	@ deleting
-        (correct indexes after list mutation)
+	@ deleting (delete task)
 
 	@ marking
-        -- status listed as an integer:
+        -- change status of the specified task.
             0 -> todo
             1 -> doing
             2 -> done
 
-	@ listing
+	@ listing 
+        -- list all tasks. can filter by status.
 
 to do:
-    - add delete function
-    - expand add/delete to accept infinitely many arguments
-    - add function to convert multiple arguments at once
-    - format time and status
-    - make parser indent JSON
-    - consider listing tasks using a slice instead of a loop
-    - handle errors more gracefully. Abstract a function, make error codes
-    - add feature to list/mark tasks by index or description
-    - add array length checking if JSON array length exceeds array capacity
-    - add ability to set index for list (initial is 0-indexed, but can set it to 1)
+    * expand add/delete to accept infinitely many arguments
+    * handle errors more gracefully. Abstract a function, make error codes
+    * add feature to list/mark tasks by description in addition to index
+    * add array length checking if JSON array length exceeds array capacity
+    * add ability to set index for list (initial is 0-indexed, but can set it to 1)
 
 # NOTES:
     - Marshal functions are for buffers. NewEncoder functions do not. If you want to read JSON,
@@ -63,3 +56,4 @@ to do:
     slice operator. Typical usage looks like passing in "buffer[:amntBytes]"
     - JSON files might have to end in a newline, but I'm unsure. Additionally parsing JSON ruins
     its indentation (but there's functions to fix that)
+    - The json package's Indent method only works on bytes.Buffer types. Which in turn only writes to a io.Reader type. This means that in order to use these you would have had to parse the JSON file in a completely different way (with the io.reader/writer methods, and possibly the json.encoder/decoder objects).
