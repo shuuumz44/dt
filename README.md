@@ -1,4 +1,5 @@
 *dt: Task Manager*
+https://github.com/shuuumz44/dt
 
 Exactly what it sounds like.
 
@@ -42,11 +43,8 @@ Exactly what it sounds like.
 
 # TODO:
     * set up tests
-    * handle errors more gracefully. Abstract a function, make error codes
     * expand add/delete to accept infinitely many arguments
-    * add feature to list/mark tasks by description in addition to index
     * add array length checking if JSON array length exceeds array capacity
-    * add ability to set index for list (initial is 0-indexed, but can set it to 1)
 
 # NOTES:
     * Marshal functions are for buffers. NewEncoder functions are not. If you want to read JSON,
