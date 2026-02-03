@@ -1,0 +1,7 @@
+{
+	"Name": "Spongebob",
+	"Limbs": 4,
+	"Occupation": "cook",
+	"Eyes": "blue",
+	"Temperament": "joyful"
+}

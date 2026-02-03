@@ -1,0 +1,17 @@
+[
+	{
+		"Name": "Spongebob",
+		"Limbs": 4,
+		"Occupation": "cook",
+		"Eyes": "blue",
+		"Temperament": "joyful"
+	},
+	
+	{
+		"Name": "Patrick",
+		"Limbs": 5,
+		"Occupation": "none",
+		"Eyes": "black",
+		"Temperament": "stupid"
+	}
+]
