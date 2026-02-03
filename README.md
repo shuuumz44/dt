@@ -40,20 +40,21 @@ Exactly what it sounds like.
 	@ listing 
         -- list all tasks. can filter by status.
 
-to do:
-    * expand add/delete to accept infinitely many arguments
+# TODO:
+    * set up tests
     * handle errors more gracefully. Abstract a function, make error codes
+    * expand add/delete to accept infinitely many arguments
     * add feature to list/mark tasks by description in addition to index
     * add array length checking if JSON array length exceeds array capacity
     * add ability to set index for list (initial is 0-indexed, but can set it to 1)
 
 # NOTES:
-    - Marshal functions are for buffers. NewEncoder functions do not. If you want to read JSON,
-    manipulate it, and send it back, you need to use marshal.
-    - Any time you process a buffer, you need to know the amount of bytes actually read into it. This means 
+    * Marshal functions are for buffers. NewEncoder functions are not. If you want to read JSON,
+    manipulate it, and send it back, use marshal.
+    * Any time you process a buffer, you need to know the amount of bytes actually read into it. This means 
     that every time you use that buffer for something after you pass data into it, you need to specify
     the range of characters in the buffer that actually contain the data that you care about, by using a 
     slice operator. Typical usage looks like passing in "buffer[:amntBytes]"
-    - JSON files might have to end in a newline, but I'm unsure. Additionally parsing JSON ruins
+    * JSON files might have to end in a newline, but I'm unsure. Additionally parsing JSON ruins
     its indentation (but there's functions to fix that)
-    - The json package's Indent method only works on bytes.Buffer types. Which in turn only writes to a io.Reader type. This means that in order to use these you would have had to parse the JSON file in a completely different way (with the io.reader/writer methods, and possibly the json.encoder/decoder objects).
+    * The json package's Indent method only works on bytes.Buffer types. Which in turn only writes to a io.Reader type. This means that in order to use these you would have had to parse the JSON file in a completely different way (with the io.reader/writer methods, and possibly the json.encoder/decoder objects).
