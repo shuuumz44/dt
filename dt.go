@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,6 +14,177 @@ type task struct {
 	Status	int 
 	Created time.Time
 	Updated time.Time
+}
+
+// macros
+var ARR_MAX int = 1000
+var help string =
+`dt: task manager CLI
+usage: 
+	dt [add] [update] [delete] [mark] [list]
+examples:
+	add a new task called "get milk":
+	dt add "get milk"
+
+	update the status of task "exercise":
+	dt update exercise
+
+	mark task "meditate" as in progress:
+	dt mark [task id] [status]
+	* status is an integer between 0 and 2.
+	these represent states "todo", "doing", and "done".
+
+	list all existing tasks:
+	dt list [todo | doing | done]
+	*add 1 of the arguments in brackets to filter the list by status.
+
+`
+
+func main() {
+	var args []string = os.Args
+	amnt := len(args)
+	if (amnt < 2) {
+		fmt.Println(help)
+		return 
+	}
+
+	arr, numTasks, fileExists, _ := Decode()
+
+	switch args[1] {
+		case "add":
+			if amnt != 3 {
+				fmt.Println("invalid argument count")
+				return 
+			}
+
+			Add(&arr, args[2]);
+
+		case "update":
+			if amnt != 4 {
+				fmt.Println("invalid argument count")
+				return 
+			}
+			if fileExists == false {
+				fmt.Println("no tasks to update.")
+				return 
+			}
+
+			err := Update(&arr, args[2], args[3]) 
+
+			if err != nil {
+				fmt.Println("failed to update.")
+				return
+			}
+
+
+		case "delete":
+			if amnt != 3 {
+				fmt.Println("invalid argument count")
+				return 
+			}
+			if fileExists == false {
+				fmt.Println("no tasks to delete.")
+				return 
+			}
+
+			err := Delete(&arr, args[2], numTasks)
+
+			if (err != nil) {
+				fmt.Println("could not delete task.")
+				return 
+			}
+
+
+		case "mark":
+			if amnt != 4 {
+				fmt.Println("invalid argument count")
+				return 
+			}
+			if fileExists == false {
+				fmt.Println("no tasks to mark.")
+				return 
+			}
+
+			err := Mark(&arr, args[2], args[3])
+			if err != nil {
+				fmt.Println("could not mark task.")
+				return
+			}
+
+		case "list":
+			if amnt == 2 {
+				ListTasks(arr[:numTasks], numTasks, 3)
+			} else if amnt == 3 {
+
+				status, err := strconv.Atoi(args[2])
+				if err != nil {
+					fmt.Println("string convert error: ", err)
+					return 
+				}
+				ListTasks(arr[:numTasks], numTasks, status)
+
+			} else {
+				fmt.Println("invalid argument count")
+				return 
+			}
+
+
+		default:
+			fmt.Println(help)
+			return 
+	}
+
+
+	// encode 
+	out, createErr := os.Create("tasks.JSON")
+	if createErr != nil {
+		fmt.Println("create error: ", createErr)
+		return 
+	}
+
+	// marshal
+	buffer, marshalErr := json.Marshal(&arr)
+	if marshalErr != nil {
+		fmt.Println("marshal error: ", marshalErr)
+		return 
+	}
+
+	// write to JSON
+	_, writeErr := out.Write(buffer)
+	if writeErr != nil {
+		fmt.Println("write error: ", writeErr)
+		return 
+	}
+
+}
+
+func Decode() ([]task, int, bool, error) {
+	arr := make([]task, 0, ARR_MAX)
+	buffer := make([]byte, 1024)
+	numTasks := 0
+
+	f, createError := os.Create("tasks.JSON")
+	if createError == nil {
+		bytes_read, readErr := f.Read(buffer)
+		if readErr != nil {
+			return arr, 0, false, errors.New("read error")
+		}
+
+		if bytes_read == 0 {
+			return arr, numTasks, true, nil
+		}
+
+		if json.Valid(buffer[:bytes_read]) == false {
+			return arr, 0, false, errors.New("invalid JSON")
+		}
+
+		unmarshalErr := json.Unmarshal(buffer[:bytes_read], &arr)
+		if unmarshalErr != nil {
+			return arr, 0, false, errors.New("unmarshal error: ")
+		}
+		numTasks = len(arr)
+	}
+	return arr, numTasks, false, nil
 }
 
 func ListTasks(t []task, amnt, status int) {
@@ -98,171 +270,5 @@ func Mark(arr *[]task, num, current string) error {
 	(*arr)[id-1].Status = newName
 
 	return nil
-}
-
-func main() {
-	// macros
-	ARR_MAX := 1000
-	help :=
-`dt: task manager CLI
-usage: 
-	dt [add] [update] [delete] [mark] [list]
-examples:
-	add a new task called "get milk":
-	dt add	"get milk"
-
-	update the status of task "exercise":
-	dt update exercise
-
-	mark task "meditate" as in progress:
-	dt mark [task id] [status]
-	* status is an integer between 0 and 2.
-	these represent states "todo", "doing", and "done".
-
-	list all existing tasks:
-	dt list [todo | doing | done]
-	*add 1 of the arguments in brackets to filter the list by status.
-
-`
-
-	var args []string = os.Args
-	amnt := len(args)
-	if (amnt < 2) {
-		fmt.Println(help)
-		return 
-	}
-	
-	// decode 
-	arr := make([]task, 0, ARR_MAX)
-	buffer := make([]byte, 1024)
-	numTasks := 0
-
-	f, fileExists := os.Open("tasks.JSON")
-	if fileExists == nil {
-		bytes_read, err := f.Read(buffer)
-		if err != nil {
-			fmt.Println("read error: ", err)
-			return 
-		}
-
-		if json.Valid(buffer[:bytes_read]) == false {
-			fmt.Println("invalid JSON");
-			return 
-		}
-
-		err = json.Unmarshal(buffer[:bytes_read], &arr)
-		if err != nil {
-			fmt.Println("unmarshal error: ", err)
-			return 
-		}
-		numTasks = len(arr)
-	}
-	
-	switch args[1] {
-		case "add":
-			if amnt != 3 {
-				fmt.Println("invalid argument count")
-				return 
-			}
-
-			Add(&arr, args[2]);
-
-		case "update":
-			if amnt != 4 {
-				fmt.Println("invalid argument count")
-				return 
-			}
-			if fileExists != nil {
-				fmt.Println("no tasks to update.")
-				return 
-			}
-
-			err := Update(&arr, args[2], args[3]) 
-
-			if err != nil {
-				fmt.Println("failed to update.")
-				return
-			}
-
-
-		case "delete":
-			if amnt != 3 {
-				fmt.Println("invalid argument count")
-				return 
-			}
-			if fileExists != nil {
-				fmt.Println("no tasks to delete.")
-				return 
-			}
-
-			err := Delete(&arr, args[2], numTasks)
-
-			if (err != nil) {
-				fmt.Println("could not delete task.")
-				return 
-			}
-
-
-		case "mark":
-			if amnt != 4 {
-				fmt.Println("invalid argument count")
-				return 
-			}
-			if fileExists != nil {
-				fmt.Println("no tasks to mark.")
-				return 
-			}
-
-			err := Mark(&arr, args[2], args[3])
-			if err != nil {
-				fmt.Println("could not mark task.")
-				return
-			}
-
-		case "list":
-			if amnt == 2 {
-				ListTasks(arr[:numTasks], numTasks, 3)
-			} else if amnt == 3 {
-
-				status, err := strconv.Atoi(args[2])
-				if err != nil {
-					fmt.Println("string convert error: ", err)
-					return 
-				}
-				ListTasks(arr[:numTasks], numTasks, status)
-
-			} else {
-				fmt.Println("invalid argument count")
-				return 
-			}
-
-
-		default:
-			fmt.Println(help)
-			return 
-	}
-
-
-	// encode 
-	out, err := os.Create("tasks.JSON")
-	if err != nil {
-		fmt.Println("create error: ", err)
-		return 
-	}
-
-	// marshal
-	buffer, err = json.Marshal(&arr)
-	if err != nil {
-		fmt.Println("marshal error: ", err)
-		return 
-	}
-
-	// write to JSON
-	_, err = out.Write(buffer)
-	if err != nil {
-		fmt.Println("write error: ", err)
-		return 
-	}
-
 }
 

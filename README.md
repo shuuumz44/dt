@@ -1,9 +1,6 @@
 *dt: Task Manager*
-https://github.com/shuuumz44/dt
 
 project link: https://roadmap.sh/projects/task-tracker
-
-Exactly what it sounds like.
 
 # USAGE:
 	-- add task
@@ -44,6 +41,8 @@ Exactly what it sounds like.
         -- list all tasks. can filter by status.
 
 # TODO:
+    * abstract functions
+    * refactor with flag package
     * set up tests
     * expand add/delete to accept infinitely many arguments
     * add array length checking if JSON array length exceeds array capacity
