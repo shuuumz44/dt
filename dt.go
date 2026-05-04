@@ -48,7 +48,11 @@ func main() {
 		return 
 	}
 
-	arr, numTasks, fileExists, _ := Decode()
+	arr, numTasks, fileExists, decodeErr := Decode()
+	if decodeErr != nil {
+		fmt.Println("decode error: ", decodeErr)
+		return
+	}
 
 	switch args[1] {
 		case "add":
@@ -57,7 +61,7 @@ func main() {
 				return 
 			}
 
-			Add(&arr, args[2]);
+			Add(&arr, args[2])
 
 		case "update":
 			if amnt != 4 {
@@ -134,26 +138,10 @@ func main() {
 			return 
 	}
 
-
-	// encode 
-	out, createErr := os.Create("tasks.JSON")
-	if createErr != nil {
-		fmt.Println("create error: ", createErr)
-		return 
-	}
-
-	// marshal
-	buffer, marshalErr := json.Marshal(&arr)
-	if marshalErr != nil {
-		fmt.Println("marshal error: ", marshalErr)
-		return 
-	}
-
-	// write to JSON
-	_, writeErr := out.Write(buffer)
-	if writeErr != nil {
-		fmt.Println("write error: ", writeErr)
-		return 
+	encodeErr := Encode(&arr)
+	if encodeErr != nil {
+		fmt.Println("encode error: ", encodeErr)
+		return
 	}
 
 }
@@ -163,28 +151,59 @@ func Decode() ([]task, int, bool, error) {
 	buffer := make([]byte, 1024)
 	numTasks := 0
 
-	f, createError := os.Create("tasks.JSON")
-	if createError == nil {
+	f, openErr := os.Open("tasks.JSON")
+	if openErr == nil {
 		bytes_read, readErr := f.Read(buffer)
-		if readErr != nil {
-			return arr, 0, false, errors.New("read error")
-		}
 
 		if bytes_read == 0 {
-			return arr, numTasks, true, nil
+			// fmt.Println("no bytes read")
+			return arr, numTasks, false, nil
+		}
+
+		if readErr != nil {
+			// fmt.Println("read err")
+			return arr, 0, false, readErr
 		}
 
 		if json.Valid(buffer[:bytes_read]) == false {
+			// fmt.Println("invalid JSON")
 			return arr, 0, false, errors.New("invalid JSON")
 		}
 
 		unmarshalErr := json.Unmarshal(buffer[:bytes_read], &arr)
 		if unmarshalErr != nil {
-			return arr, 0, false, errors.New("unmarshal error: ")
+			// fmt.Println("unmarshal err")
+			return arr, 0, false, unmarshalErr
 		}
+
 		numTasks = len(arr)
-	}
+		return arr, numTasks, true, nil
+	} 
+
 	return arr, numTasks, false, nil
+}
+
+func Encode(arr *[]task) error {
+
+	buffer, marshalErr := json.Marshal(arr)
+	if marshalErr != nil {
+		// fmt.Println("marshal err")
+		return marshalErr
+	}
+
+	f, createErr := os.Create("tasks.JSON")
+	if createErr != nil {
+		// fmt.Println("create error")
+		return createErr
+	}
+
+	_, writeErr := f.Write(buffer)
+	if writeErr != nil {
+		// fmt.Println("write err")
+		return writeErr
+	}
+
+	return nil
 }
 
 func ListTasks(t []task, amnt, status int) {
@@ -244,25 +263,24 @@ func Update(arr *[]task, num string, name string) error {
 
 func Delete(arr *[]task, num string, tasks int) error {
 	id, err := strconv.Atoi(num)
-	if (err != nil) {
+	if err != nil {
 		fmt.Println("string convert error: ", err)
 		return err
 	}
 	
-	next := id
-	*arr = append((*arr)[:id-1], (*arr)[next:tasks]...)
+	*arr = append((*arr)[:id-1], (*arr)[id:tasks]...)
 
 	return nil
 }
 
 func Mark(arr *[]task, num, current string) error {
 	newName, err1 := strconv.Atoi(current)
-	if (err1 != nil ) {
+	if err1 != nil {
 		fmt.Println("string convert error: ", err1)
 		return err1 
 	}
 	id, err2 := strconv.Atoi(num)
-	if (err2 != nil ) {
+	if err2 != nil {
 		fmt.Println("string convert error: ", err2)
 		return err2
 	}

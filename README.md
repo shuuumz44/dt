@@ -41,11 +41,12 @@ project link: https://roadmap.sh/projects/task-tracker
         -- list all tasks. can filter by status.
 
 # TODO:
-    * abstract functions
     * refactor with flag package
     * set up tests
     * expand add/delete to accept infinitely many arguments
     * add array length checking if JSON array length exceeds array capacity
+
+# ERRORS:
 
 # NOTES:
     * Marshal functions are for buffers. NewEncoder functions are not. If you want to read JSON,
