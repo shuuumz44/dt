@@ -153,6 +153,8 @@ func Decode() ([]task, int, bool, error) {
 
 	f, openErr := os.Open("tasks.JSON")
 	if openErr == nil {
+		defer f.Close()
+
 		bytes_read, readErr := f.Read(buffer)
 
 		if bytes_read == 0 {
@@ -196,6 +198,7 @@ func Encode(arr *[]task) error {
 		// fmt.Println("create error")
 		return createErr
 	}
+	defer f.Close()
 
 	_, writeErr := f.Write(buffer)
 	if writeErr != nil {
